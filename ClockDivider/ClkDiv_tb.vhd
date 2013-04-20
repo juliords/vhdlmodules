@@ -39,9 +39,9 @@ architecture Behavioral of ClkDiv_tb is
 			by_value : integer
 		);
 		Port ( 
-			reset 		: in  STD_LOGIC;
-			clock_in 	: in  STD_LOGIC;
-			clock_out 	: out STD_LOGIC
+			reset	: in  STD_LOGIC;
+			clock : in  STD_LOGIC;
+			pulse	: out STD_LOGIC
 		);
 	end component;
 
@@ -55,11 +55,11 @@ begin
 	rst <= '1', '0' after T/4;
 
 	Test_inst : ClockDivider
-		generic map ( by_value => 5208 )
+		generic map ( by_value => 1025 )
 		port map(
-			reset 		=> rst,
-			clock_in 	=> clkIn,
-			clock_out 	=> clkOut
+			reset 	=> rst,
+			clock 	=> clkIn,
+			pulse 	=> clkOut
 		);
 	
 	process

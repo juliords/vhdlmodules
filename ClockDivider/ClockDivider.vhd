@@ -27,31 +27,38 @@ entity ClockDivider is
 		by_value : integer
 	);
 	Port ( 
-		reset			: in  STD_LOGIC;
-		clock_in 	: in  STD_LOGIC;
-		clock_out 	: out STD_LOGIC
+		reset	: in  STD_LOGIC;
+		clock : in  STD_LOGIC;
+		pulse	: out STD_LOGIC
 	);
 end ClockDivider;
 
 architecture Behavioral of ClockDivider is
 
-	constant len 		: integer := integer(ceil(log2(real(by_value/2))));
+	constant len 		: integer := integer(ceil(log2(real(by_value))));
 	signal 	count 	: STD_LOGIC_VECTOR(len-1 downto 0);
-	signal 	clk_int 	: STD_LOGIC;
+	signal 	msb_ff 	: STD_LOGIC;
 
 begin
 	
-	clock_out <= clk_int;
+	pulse <= msb_ff and (not count(len-1));
 
-	process (reset, clock_in)
+	process (reset, clock)
+	begin
+		if reset = '1' then
+			msb_ff <= '0';
+		elsif rising_edge(clock) then
+			msb_ff <= count(len-1);
+		end if;
+	end process;
+
+	process (reset, clock)
 	begin
 		if reset = '1' then
 			count <= (others=>'0');
-			clk_int <= '0';
-		elsif rising_edge(clock_in) then
-			if(count = (by_value/2)-1) then
+		elsif rising_edge(clock) then
+			if count = by_value-1 then
 				count <= (others=>'0');
-				clk_int <= not clk_int;
 			else
 				count <= count + 1;
 			end if;
